@@ -8,6 +8,7 @@
 library(tidyr)
 library(dslabs)
 library(ggplot2)
+
 data("murders")
 p < murders %>% ggplot(aes(population/10^6,total,label=abb))
 
@@ -46,16 +47,16 @@ p + geom_point(aes(col=region),size=3)
 #dinh nghia ti le trung binh
 # define average murder rate
 r <- murders %>%
-  summarize(rate = sum(total) / sum(population) * 10^6) %>%
-  pull(rate)
-
+  summarize(rate=sum(total)/sum(population)*10^6) %>% pull(rate) # tinh tich luy ti le total/population vao r
 # basic line with average murder rate for the country
 p <- p + geom_point(aes(col = region), size = 3) +
   geom_abline(intercept = log10(r))    # slope is default of 1
 
 # change line to dashed and dark grey, line under points
+#abline phai goi truoc point
 p + 
   geom_abline(intercept = log10(r), lty = 2, color = "darkgrey") +
   geom_point(aes(col = region), size = 3)
 
 p <- p + scale_color_discrete(name = "Region")    # capitalize legend title
+
