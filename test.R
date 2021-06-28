@@ -36,3 +36,15 @@ observed_quantiles <- quantile(z,p)
 theoretical_quantiles <- qnorm(p)
 plot(theoretical_quantiles, observed_quantiles)
 abline(0,1)
+#-----------
+#Code 1.4 ggplot
+library(tidyr)
+library(dslabs)
+data(murders)
+ggplot(data=murders)
+murder %>% ggplot()
+p <- ggplot(data=murders) #creat ggplot object
+class(p)
+print(p)
+p
+
