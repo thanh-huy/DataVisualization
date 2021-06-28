@@ -16,7 +16,7 @@ SD <- sd(x)
 c(average=average, SD = SD)
 print(c)
 
-# tinh don vi chuan
+# tinh don vi chuan, quy data ve dang phan phoi chuan
 z <- scale(x)
 
 #tinh ti le cua gia tri trong vong 2 SD so voi trung tinh
@@ -42,6 +42,7 @@ exact/ approx
 #E4. Dung pnorm tinh xap xi chieu cao cua cac cau thu tren 7 feet (7*12 inches)
 # Gia thiet mean = 69, sd = 3
 pnorm(7*12,69, 3, FALSE)
+
 #E5. Uoc luong ti le trong 1 ti nguoi trong do tuoi 18-40 co bao nhieu nguoi co chieu cao tren 7 feet
 p <- pnorm(7*12, 69,3,FALSE)
 round(p*10^9)
