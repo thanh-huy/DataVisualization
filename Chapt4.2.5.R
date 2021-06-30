@@ -6,6 +6,7 @@
 library(dslabs)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
 data("gapminder")
 
 gapminder <- gapminder %>%
@@ -64,4 +65,51 @@ p + geom_boxplot(aes(region, dollar_per_day, fill = continent)) +
 
 #sap xep khop cac boxplot, to mau theo nam
 p + geom_boxplot(aes(region, dollar_per_day, fill=factor(year)))
-  
+
+
+#Ve ham mat do density
+gapminder %>%
+  filter(year==past_year & country %in% country_list) %>%
+  mutate(group=ifelse(region %in% west, "West", "Developing")) %>% group_by(group) %>%
+  summarize(n = n()) %>% knitr::kable()
+
+# ve ham mat do density - vien counts tren truc y
+p <- gapminder %>%
+  filter(year==past_year & country %in% country_list) %>%
+  mutate(group=ifelse(region %in% west, "West", "Developing")) %>%
+  ggplot(aes(dollar_per_day, y= ..count.., fill=group)) +
+  scale_x_continuous(trans = "log2")
+p + geom_density(alpha=0.2, bw = 0.75) +
+  facet_grid(year~.)
+
+# them moi nhom region su dung case_when
+gapminder <- gapminder %>%
+  mutate(group = case_when(
+    .$region %in% west ~ "West",
+    .$region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+    .$region  %in% c("Caribbean", "Central America", "South America") ~ "Latin America",
+    .$continent == "Africa" & .$region != "Northern Africa" ~ "Sub-Saharan Africa",
+    TRUE ~ "Others"))
+# sap xep lai theo factor group
+gapminder <- gapminder %>%
+  mutate(group = factor(group, levels = c("Others", "Latin America", "East Asia", "Sub-Saharan Africa", "West")))
+
+#Hien thi cac ham mat do theo stack
+p <- gapminder%>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+  ggplot(aes(dollar_per_day, fill = group)) +
+  scale_x_continuous(trans="log2")
+#chong stack cac ham mat do
+p+ geom_density(alpha=0.2, bw=0.75, position = "stack") +
+  facet_grid(year~.)
+
+#Danh trong so cac stack density
+gapminder %>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+  group_by(year) %>%
+  mutate(weight = population/(sum(population*2))) %>%
+  ungroup() %>%
+  ggplot(aes(dollar_per_day, fill = group, weight = weight)) +
+  scale_x_continuous(trans = "log2") +
+  geom_density(alpha = .2, bw = .75, position = "stack") +
+  facet_grid(year~.)
